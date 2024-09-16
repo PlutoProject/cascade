@@ -1,2 +1,4 @@
 # Cascade
-A experimental Purpur fork for modern Minecraft
+
+> [!CAUTION]
+> **THIS PROJECT COMES WITH ABSOLUTELY NO WARRANTY. WE WON'T PROVIDE ANY SUPPORT FOR IT. USE IT AT YOUR OWN RISK.**
