@@ -1,0 +1,25 @@
+# Mac filesystem dust
+.DS_Store/
+.DS_Store
+
+# Linux temp files
+*~
+
+# IntelliJ
+*.iml
+.idea
+
+# Gradle
+!gradle/wrapper/gradle-wrapper.jar
+.gradle
+build
+
+# Leaf
+build-data
+patches/todo
+run
+
+cascade-api
+cascade-mojangapi
+cascade-server
+paper-api-generator

@@ -1,0 +1,314 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: nostalfinals <yuu8583@proton.me>
+Date: Tue, 17 Sep 2024 23:36:09 +0800
+Subject: [PATCH] Rebrand
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index b7d584c8b96eb7699e5df90ed04bf22ee256d571..1ca64242a725a0c070674f1f3a7a8ecfe909bdbd 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -77,6 +77,10 @@ dependencies {
+     testImplementation("org.hamcrest:hamcrest:2.2")
+     testImplementation("org.mockito:mockito-core:5.11.0")
+     testImplementation("org.ow2.asm:asm-tree:9.7")
++
++    // Cascade start
++    compileOnly("com.github.oshi:oshi-core:6.4.10")
++    // Cascade end
+ }
+ 
+ // Paper start
+diff --git a/src/main/java/ink/pmc/cascade/Ctp.java b/src/main/java/ink/pmc/cascade/Ctp.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..84be4ecb1cc6ac0c7bad3354c9350044d455e65b
+--- /dev/null
++++ b/src/main/java/ink/pmc/cascade/Ctp.java
+@@ -0,0 +1,37 @@
++package ink.pmc.cascade;
++
++import net.kyori.adventure.text.format.TextColor;
++
++/*
++* Catppuccin Mocha Palette.
++* Source: https://github.com/catppuccin/catppuccin
++* */
++@SuppressWarnings("unused")
++public final class Ctp {
++    public static final TextColor ROSEWATER = TextColor.fromHexString("#f5e0dc");
++    public static final TextColor FLAMINGO = TextColor.fromHexString("#f2cdcd");
++    public static final TextColor PINK = TextColor.fromHexString("#f5c2e7");
++    public static final TextColor MAUVE = TextColor.fromHexString("#cba6f7");
++    public static final TextColor RED = TextColor.fromHexString("#f38ba8");
++    public static final TextColor MAROON = TextColor.fromHexString("#eba0ac");
++    public static final TextColor PEACH = TextColor.fromHexString("#fab387");
++    public static final TextColor YELLOW = TextColor.fromHexString("#f9e2af");
++    public static final TextColor GREEN = TextColor.fromHexString("#a6e3a1");
++    public static final TextColor TEAL = TextColor.fromHexString("#94e2d5");
++    public static final TextColor SKY = TextColor.fromHexString("#89dceb");
++    public static final TextColor SAPPHIRE = TextColor.fromHexString("#74c7ec");
++    public static final TextColor BLUE = TextColor.fromHexString("#89b4fa");
++    public static final TextColor LAVENDER = TextColor.fromHexString("#b4befe");
++    public static final TextColor TEXT = TextColor.fromHexString("#cdd6f4");
++    public static final TextColor SUBTEXT1 = TextColor.fromHexString("#bac2de");
++    public static final TextColor SUBTEXT0 = TextColor.fromHexString("#a6adc8");
++    public static final TextColor OVERLAY2 = TextColor.fromHexString("#9399b2");
++    public static final TextColor OVERLAY1 = TextColor.fromHexString("#7f849c");
++    public static final TextColor OVERLAY0 = TextColor.fromHexString("#6c7086");
++    public static final TextColor SURFACE2 = TextColor.fromHexString("#585b70");
++    public static final TextColor SURFACE1 = TextColor.fromHexString("#45475a");
++    public static final TextColor SURFACE0 = TextColor.fromHexString("#313244");
++    public static final TextColor BASE = TextColor.fromHexString("#1e1e2e");
++    public static final TextColor MANTLE = TextColor.fromHexString("#181825");
++    public static final TextColor CRUST = TextColor.fromHexString("#11111b");
++}
+\ No newline at end of file
+diff --git a/src/main/java/ink/pmc/cascade/utils/OsUtils.java b/src/main/java/ink/pmc/cascade/utils/OsUtils.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..2e652773d667ac927d855e8e9c9080a5ff3579ad
+--- /dev/null
++++ b/src/main/java/ink/pmc/cascade/utils/OsUtils.java
+@@ -0,0 +1,117 @@
++package ink.pmc.cascade.utils;
++
++import oshi.SystemInfo;
++import oshi.hardware.CentralProcessor;
++import oshi.software.os.OperatingSystem;
++
++import java.text.DecimalFormat;
++
++/*
++ * Utility class for fetching several OS information.
++ * Mainly use in our beautiful version message.
++ * */
++public class OsUtils {
++    private static final Runtime RUNTIME = Runtime.getRuntime();
++    private static final SystemInfo SYSTEM_INFO = new SystemInfo();
++    private static final OperatingSystem OS = SYSTEM_INFO.getOperatingSystem();
++    private static final CentralProcessor PROCESSOR = SYSTEM_INFO.getHardware().getProcessor();
++    private static final CentralProcessor.ProcessorIdentifier PROCESSOR_IDENTIFIER = PROCESSOR.getProcessorIdentifier();
++
++    private static final long MB = 1L << 20;
++    private static final long GB = 1L << 30;
++    private static final long TB = 1L << 40;
++
++    private OsUtils() {
++    }
++
++    public enum MemoryUnit {
++        MB, GB, TB
++    }
++
++    public static String getOs() {
++        return OS.getFamily() + " " + OS.getVersionInfo().getVersion() + " " + System.getProperty("os.arch");
++    }
++
++    public static String getProcessor() {
++        return PROCESSOR_IDENTIFIER.getName();
++    }
++
++    public static long getUsedMemory() {
++        return RUNTIME.totalMemory() - RUNTIME.freeMemory();
++    }
++
++    public static long getTotalMemory() {
++        return RUNTIME.totalMemory();
++    }
++
++    public static MemoryUnit getMemoryUnit() {
++        final var total = getTotalMemory();
++        if (total >= TB) {
++            return MemoryUnit.TB;
++        } else if (total >= GB) {
++            return MemoryUnit.GB;
++        } else if (total >= MB) {
++            return MemoryUnit.MB;
++        }
++        throw new IllegalStateException("Cannot determine memory unit for total memory: " + total);
++    }
++
++    public static String getMemoryUnitText(MemoryUnit unit) {
++        final String unitText;
++        if (unit == MemoryUnit.MB) {
++            unitText = "MB";
++        } else if (unit == MemoryUnit.GB) {
++            unitText = "GB";
++        } else if (unit == MemoryUnit.TB) {
++            unitText = "TB";
++        } else {
++            throw new IllegalStateException("Unknown memory unit: " + unit);
++        }
++        return unitText;
++    }
++
++    /*
++     * Converts memory (byte) to specific unit.
++     * */
++    public static long convertMemoryToUnit(long memory, MemoryUnit unit) {
++        final long mem;
++        if (unit == MemoryUnit.MB) {
++            mem = memory >> 20;
++        } else if (unit == MemoryUnit.GB) {
++            mem = memory >> 30;
++        } else if (unit == MemoryUnit.TB) {
++            mem = memory >> 40;
++        } else {
++            throw new IllegalStateException("Unknown memory unit: " + unit);
++        }
++        return mem;
++    }
++
++    /*
++     * Returns something like: 143MB / 1024MB.
++     * */
++    public static String getMemoryInfo() {
++        final var unit = getMemoryUnit();
++        final var unitText = getMemoryUnitText(unit);
++        final DecimalFormat df = new DecimalFormat("#.##");
++        final String used, total;
++
++        double usedMemory = convertMemoryToUnit(getUsedMemory(), MemoryUnit.MB);
++        double totalMemory = convertMemoryToUnit(getTotalMemory(), MemoryUnit.MB);
++
++        if (unit == MemoryUnit.MB) {
++            used = String.valueOf(df.format(usedMemory));
++            total = String.valueOf(df.format(totalMemory));
++        } else if (unit == MemoryUnit.GB) {
++            used = String.valueOf(df.format(usedMemory / 1024));
++            total = String.valueOf(df.format(totalMemory / 1024));
++        } else if (unit == MemoryUnit.TB) {
++            used = String.valueOf(df.format(usedMemory / (1024 * 1024)));
++            total = String.valueOf(df.format(totalMemory / (1024 * 1024)));
++        } else {
++            throw new IllegalStateException("Unknown memory unit: " + unit);
++        }
++
++        return used + unitText + " / " + total + unitText;
++    }
++}
+diff --git a/src/main/java/io/papermc/paper/ServerBuildInfo.java b/src/main/java/io/papermc/paper/ServerBuildInfo.java
+index 8c2c5ea14a839c8767bbf120ae5512f65475cbb0..925049e089efd437561df99450641304a7e0cc9e 100644
+--- a/src/main/java/io/papermc/paper/ServerBuildInfo.java
++++ b/src/main/java/io/papermc/paper/ServerBuildInfo.java
+@@ -32,6 +32,13 @@ public interface ServerBuildInfo {
+     Key BRAND_PURPUR_ID = Key.key("purpurmc", "purpur");
+     // Purpur end
+ 
++    // Cascade start
++    /**
++     * The brand id for Cascade.
++     */
++    Key BRAND_CASCADE_ID = Key.key("plutoproject", "cascade");
++    // Cascade end
++
+     /**
+      * Gets the {@code ServerBuildInfo}.
+      *
+@@ -111,6 +118,15 @@ public interface ServerBuildInfo {
+      */
+     @NotNull Optional<String> gitCommit();
+ 
++    // Cascade start - add attributes
++    /**
++     * Gets the version of Cascade.
++     *
++     * @return the version of Cascade (example: '1.0-alpha')
++     */
++    @NotNull String cascadeVersion();
++    // Cascade end - add attributes
++
+     /**
+      * Creates a string representation of the server build information.
+      *
+diff --git a/src/main/java/org/bukkit/command/defaults/VersionCommand.java b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+index c880d0010849ab733ad13bbd18fab3c864d0cf61..d0f9489e7dfa1535cb346e8ed463c325ca3de7e4 100644
+--- a/src/main/java/org/bukkit/command/defaults/VersionCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+@@ -30,10 +30,15 @@ import com.destroystokyo.paper.util.VersionFetcher;
+ import net.kyori.adventure.text.Component;
+ import net.kyori.adventure.text.format.NamedTextColor;
+ import net.kyori.adventure.text.event.ClickEvent;
+-import net.kyori.adventure.text.format.TextDecoration;
+ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+ // Paper end - version command 2.0
+ 
++// Cascade start
++import ink.pmc.cascade.Ctp;
++import ink.pmc.cascade.utils.OsUtils;
++import io.papermc.paper.ServerBuildInfo;
++// Cascade end
++
+ public class VersionCommand extends BukkitCommand {
+     private VersionFetcher versionFetcher; // Paper - version command 2.0
+     private VersionFetcher getVersionFetcher() { // lazy load because unsafe isn't available at command registration
+@@ -177,8 +182,29 @@ public class VersionCommand extends BukkitCommand {
+     private final Set<CommandSender> versionWaiters = new HashSet<CommandSender>();
+     private boolean versionTaskStarted = false;
+     private long lastCheck = 0;
++    private static final ServerBuildInfo build = ServerBuildInfo.buildInfo(); // Cascade
++
++    // Cascade start - replace with our decent message
++    public Component getLocalVersionMessage() {
++        return Component.text("Cascade ").color(Ctp.PINK)
++                .append(Component.text("v" + build.cascadeVersion() + " ").color(Ctp.TEXT))
++                .append(Component.text("(" + build.asString(ServerBuildInfo.StringRepresentation.VERSION_SIMPLE) + ")").color(Ctp.SUBTEXT0))
++                .appendNewline()
++                .append(Component.text("Made with ❤ by PlutoProject community").color(Ctp.FLAMINGO))
++                .appendNewline()
++                .append(Component.text("OS: ").color(Ctp.SUBTEXT0))
++                .append(Component.text(OsUtils.getOs()).color(Ctp.LAVENDER))
++                .appendNewline()
++                .append(Component.text("Processor: ").color(Ctp.SUBTEXT0))
++                .append(Component.text(OsUtils.getProcessor()).color(Ctp.LAVENDER))
++                .appendNewline()
++                .append(Component.text("Memory: ").color(Ctp.SUBTEXT0))
++                .append(Component.text(OsUtils.getMemoryInfo()).color(Ctp.LAVENDER));
++    }
++    // Cascade end - replace with our decent message
+ 
+     private void sendVersion(@NotNull CommandSender sender) {
++        sender.sendMessage(getLocalVersionMessage()); // Cascade - replace with our decent message
+         if (hasVersion) {
+             if (System.currentTimeMillis() - lastCheck > getVersionFetcher().getCacheTime()) { // Paper - use version supplier
+                 lastCheck = System.currentTimeMillis();
+@@ -195,7 +221,6 @@ public class VersionCommand extends BukkitCommand {
+                 return;
+             }
+             versionWaiters.add(sender);
+-            sender.sendMessage(Component.text("Checking version, please wait...", NamedTextColor.WHITE, TextDecoration.ITALIC)); // Paper
+             if (!versionTaskStarted) {
+                 versionTaskStarted = true;
+                 new Thread(new Runnable() {
+@@ -259,14 +284,11 @@ public class VersionCommand extends BukkitCommand {
+         // Purpur start
+         int distance = getVersionFetcher().distance();
+         final Component message = Component.join(net.kyori.adventure.text.JoinConfiguration.separator(Component.newline()),
+-            ChatColor.parseMM("<grey>Current Purpur Version: %s%s*", distance == 0 ? "<green>" : distance > 0 ? "<yellow>" : "<red>", Bukkit.getVersion()),
+             // Purpur end
+             msg
+         );
+         this.versionMessage = Component.text()
+             .append(message)
+-            .hoverEvent(Component.text("Click to copy to clipboard", NamedTextColor.WHITE))
+-            .clickEvent(ClickEvent.copyToClipboard(PlainTextComponentSerializer.plainText().serialize(message)))
+             .build();
+         // Paper end
+         versionLock.lock();
+diff --git a/src/test/java/io/papermc/paper/TestServerBuildInfo.java b/src/test/java/io/papermc/paper/TestServerBuildInfo.java
+index 17be27a869c1047a7a9440fb8f3717260d4abbd0..03c83dcd622947f48d8aa0ea24b3a666c274b093 100644
+--- a/src/test/java/io/papermc/paper/TestServerBuildInfo.java
++++ b/src/test/java/io/papermc/paper/TestServerBuildInfo.java
+@@ -52,6 +52,13 @@ public class TestServerBuildInfo implements ServerBuildInfo {
+         throw new UnsupportedOperationException();
+     }
+ 
++    // Cascade start - add attributes
++    @Override
++    public @NotNull String cascadeVersion() {
++        throw new UnsupportedOperationException();
++    }
++    // Cascade end - add attributes
++
+     @Override
+     public @NotNull String asString(final @NotNull StringRepresentation representation) {
+         return "";
